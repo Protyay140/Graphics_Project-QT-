@@ -2168,6 +2168,9 @@ void MainWindow::keyPressEvent(QKeyEvent * event){
     if(event->key()== Qt::Key_N){
         on_speedDown_clicked();
     }
+    if(event->key()== Qt::Key_Q){
+        on_draw_background_clicked();
+    }
 }
 
 
