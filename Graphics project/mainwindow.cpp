@@ -3,8 +3,8 @@
 #include <QPixmap>
 #include <QImage>
 #include <iostream>
-#include <QMouseEvent>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPoint>
