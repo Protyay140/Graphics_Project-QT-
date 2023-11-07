@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <bits/stdc++.h>
 #include "ui_mainwindow.h"
 #include <QPixmap>
 #include <QImage>
@@ -8,7 +9,6 @@
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPoint>
-#include <bits/stdc++.h>
 #include <unistd.h>
 
 using namespace std;
