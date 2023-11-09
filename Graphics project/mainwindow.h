@@ -96,7 +96,7 @@ private slots:
     void center_line();
     void car();
     void translation(int val);
-    void building();
+    void building(int val1,int val2,int val3);
     void sky();
     void sky_birds();
     void addLake();
@@ -109,6 +109,8 @@ private slots:
     void on_speedUp_clicked();
 
     void on_speedDown_clicked();
+    void setMusic();
+    void checkMusic();
 
 private:
     Ui::MainWindow *ui;
