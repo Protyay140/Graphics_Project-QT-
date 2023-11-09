@@ -1,15 +1,18 @@
 #include "mainwindow.h"
-#include <bits/stdc++.h>
 #include "ui_mainwindow.h"
 #include <QPixmap>
 #include <QImage>
 #include <iostream>
-#include <QKeyEvent>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPoint>
+#include <bits/stdc++.h>
 #include <unistd.h>
+#include <QMediaPlayer>
+#include <QSoundEffect>
+#include <QAudioOutput>
 
 using namespace std;
 
@@ -28,7 +31,7 @@ vector<vector<int>> background(70,vector<int>(70));
 //wheel
 vector<pair<int,int>> first_wheel={{28,34},{29,34},{30,34},{30,35},{30,36},{29,36},{28,36},{28,35}};
 vector<pair<int,int>> second_wheel={{39,34},{40,34},{41,34},{41,35},{41,36},{40,36},{39,36},{39,35}};
-vector<int> wheel_color={2,1,20,2,1,20,2,1};
+vector<int> wheel_color={70,70,70,4,4,4,20,20};
 
 
 
@@ -118,6 +121,14 @@ void MainWindow::setColor(int x,int y,int c){
             else if(c==71){
                 img.setPixel(j,i,qRgb(92, 64, 51));
             }
+
+            else if(c==10){
+                img.setPixel(j,i,qRgb(143,95,61));
+            }
+            else if(c==101){
+                img.setPixel(j,i,qRgb(68, 66, 64));
+            }
+
         }
     }
 //    ui->frame->setPixmap(QPixmap::fromImage(img));
@@ -1893,7 +1904,12 @@ void MainWindow::car(){
     for(int i=26;i<=43;i++){
         for(int j=29;j<=34;j++){
             //background[i][j]=21;
-            setColor(i,j,21);
+            if((i==26 && j==32) || (i==26 && j==31)){
+                setColor(i,j,12);
+            }
+            else{
+                setColor(i,j,21);
+            }
         }
     }
 
@@ -1919,15 +1935,16 @@ void MainWindow::car(){
     setColor(40,35,0);
 }
 
-void MainWindow::building(){
+void MainWindow::building(int val1,int val2,int val3){
     int s=5;
+
     for(int i=s;i<s+10;i++){
         for(int j=15;j<=28;j++){
             if((i>=s+1&&i<=s+2&&j>=21&&j<=22)||(i>=s+7&&i<=s+8&&j>=21&&j<=22)||(i>=s+1&&i<=s+2&&j>=16&&j<=18)||(i>=s+7&&i<=s+8&&j>=16&&j<=18))
                 background[i][j]=32;//black
             else
 //                background[i][j]=31;//yellow
-                  background[i][j]=18;
+                  background[i][j]=val1;
         }
     }
     s+=20;
@@ -1937,7 +1954,7 @@ void MainWindow::building(){
                 background[i][j]=32;//black
             else
 //                background[i][j]=31;//yellow
-                  background[i][j]=19;
+                  background[i][j]=val2;
         }
     }
     s+=20;
@@ -1947,7 +1964,7 @@ void MainWindow::building(){
                 background[i][j]=32;//black
             else
 //                background[i][j]=31;//yellow
-                  background[i][j]=20;
+                  background[i][j]=val3;
         }
     }
 }
@@ -2028,7 +2045,7 @@ void MainWindow::addLake() {
     // Fill the lake area with blue water
     for (int i = startX; i <= endX; i++) {
         for (int j = startY; j <= endY; j++) {
-            background[i][j] = 69; // 69 for blue water
+            background[i][j] = 10; // 69 for blue water
         }
     }
 
@@ -2037,12 +2054,13 @@ void MainWindow::addLake() {
     for (int line = 0; line < numLines; line++) {
         int randomX = startX + rand() % (endX - startX + 1);
         int randomY = startY + rand() % (endY- startY + 1);
-        background[randomX][randomY] = 70; //dark blue lines
+        background[randomX][randomY] = 101; //minerals color
         //background[randomX+(rand() % (randomX))][randomY+(rand() % (randomY))] = 70;
     }
 }
 
 void MainWindow::draw_background(){
+
     for(int i=0;i<70;i++){
         for(int j=0;j<70;j++){
             //cout<<i<<" "<<j<<endl;
@@ -2073,6 +2091,13 @@ void MainWindow::translation(int val){
         temp_wheel_color[i]=wheel_color[(i+val)%8];
     }
     wheel_color=temp_wheel_color;
+
+
+    //building color changing........
+//    int val1 = (rand() % (20 - 18 + 1)) + 18;
+//    int val2 = (rand() % (20 - 18 + 1)) + 18;
+//    int val3 = (rand() % (20 - 18 + 1)) + 18;
+//    building(val1,val2,val3);
 }
 
 
@@ -2084,7 +2109,7 @@ void MainWindow::on_draw_background_clicked()
     sky_birds();
     addLake();
     center_line();
-    building();
+    building(18,19,20);
     draw_background();
     ui->frame->setPixmap(QPixmap::fromImage(img));
 
@@ -2104,6 +2129,8 @@ void MainWindow::on_draw_background_clicked()
 
 void MainWindow::on_start_clicked()
 {
+    setMusic();
+    global_speed=1;
     while(true){
         myDelay();
         translation(global_speed);
@@ -2129,6 +2156,7 @@ void MainWindow::on_stop_clicked()
 void MainWindow::on_speedUp_clicked()
 {
     global_speed++;
+//    checkMusic();
     while(true){
         myDelay();
         translation(global_speed);
@@ -2141,7 +2169,11 @@ void MainWindow::on_speedUp_clicked()
 
 void MainWindow::on_speedDown_clicked()
 {
-    global_speed--;
+    if(global_speed-1==0){
+        return;
+    }else{
+        global_speed--;
+    }
     while(true){
         myDelay();
         translation(global_speed);
@@ -2153,13 +2185,17 @@ void MainWindow::on_speedDown_clicked()
 
 
 // keyboard event ...........................................
-
+QMediaPlayer *player = new QMediaPlayer;
+QAudioOutput *output = new QAudioOutput;
+//int flagM=0;
 void MainWindow::keyPressEvent(QKeyEvent * event){
     cout<<(char)event->key()<<endl;
     if(event->key()== Qt::Key_S){
+//        setMusic();
         on_start_clicked();
     }
     if(event->key()== Qt::Key_O){
+        player->pause();
        on_stop_clicked();
     }
     if(event->key()== Qt::Key_U){
@@ -2171,7 +2207,32 @@ void MainWindow::keyPressEvent(QKeyEvent * event){
     if(event->key()== Qt::Key_Q){
         on_draw_background_clicked();
     }
+    if(event->key()== Qt::Key_M){
+//        flagM=0;
+        setMusic();
+    }
+    if(event->key()== Qt::Key_B){
+//        flagM=1;
+        player->pause();
+    }
+//    if(MainWindow.close()){
+//        player->pause();
+//    }
 }
 
+//for music.....
+void MainWindow::checkMusic(){
+    if(global_speed==0){
+       player->pause();
+    }
+}
 
+void MainWindow::setMusic(){
+        player->setAudioOutput(output);
+        player->setSource(QUrl("qrc:/sounds/bg3.mp3"));
 
+        output->setVolume(0.5); // <--- floating numbers. from 0 - 1
+
+        player->play();
+
+}
