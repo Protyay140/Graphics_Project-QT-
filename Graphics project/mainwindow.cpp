@@ -26,7 +26,7 @@ set<pair<pair<int,int>,int>> s;
 
 
 vector<vector<int>> background(70,vector<int>(70));
-//background[i][j]=2;
+
 
 //wheel
 vector<pair<int,int>> first_wheel={{28,34},{29,34},{30,34},{30,35},{30,36},{29,36},{28,36},{28,35}};
